@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Agenda — ideas, direcciones y enlaces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4efe3; --paper-2:#ebe4d2; --grid:rgba(40,60,110,.07);
+  --ink:#1c2233; --ink-soft:#5a6072; --line:#d6cdb6;
+  --card:#fffdf7; --accent:#b8352a; --accent-ink:#fff;
+  --idea:#d99a1e; --dir:#2f7d5b; --link:#2d5fb8; --nota:#7a5aa6;
+  --shadow:0 1px 0 rgba(0,0,0,.04),0 8px 20px -12px rgba(30,30,60,.35);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#15171f; --paper-2:#1c1f29; --grid:rgba(160,180,255,.05);
+    --ink:#ece6d6; --ink-soft:#a3a3ad; --line:#2e3240;
+    --card:#1f2230; --accent:#e5594c;
+    --idea:#f0b847; --dir:#4fb489; --link:#6f9cf0; --nota:#b596e0;
+    --shadow:0 8px 24px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#15171f; --paper-2:#1c1f29; --grid:rgba(160,180,255,.05);
+  --ink:#ece6d6; --ink-soft:#a3a3ad; --line:#2e3240;
+  --card:#1f2230; --accent:#e5594c;
+  --idea:#f0b847; --dir:#4fb489; --link:#6f9cf0; --nota:#b596e0;
+  --shadow:0 8px 24px -14px rgba(0,0,0,.8);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 110px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:10px 0 14px;border-bottom:2px solid var(--ink);margin-bottom:16px;position:relative}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--ink);opacity:.5}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(2rem,8vw,3rem);line-height:.95;margin:0;letter-spacing:-.02em}
+h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.sub{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+.status{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);text-align:right;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--idea);display:inline-block}
+.dot.ok{background:var(--dir)} .dot.err{background:var(--accent)}
+
+/* composer */
+.composer{background:var(--card);border:1.5px solid var(--ink);border-radius:4px;box-shadow:4px 4px 0 var(--ink);padding:14px;margin-bottom:22px}
+.types{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.types button{font:500 .85rem var(--body);border:1.5px solid var(--line);background:transparent;color:var(--ink);padding:6px 11px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.types button[aria-pressed="true"]{border-color:var(--t);background:var(--t);color:#fff}
+.types button .sw{width:9px;height:9px;border-radius:50%;background:var(--t)}
+.types button[aria-pressed="true"] .sw{background:#fff}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:3px;padding:10px 12px;outline:none}
+input:focus,textarea:focus{border-color:var(--ink);background:var(--card)}
+textarea{resize:vertical;min-height:84px}
+.fields{display:grid;gap:8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.row .grow{flex:1 1 160px}
+.btn{font:600 .9rem var(--body);border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:3px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.small{padding:6px 10px;font-size:.8rem}
+.btn:active{transform:translateY(1px)}
+.hint{font-size:.78rem;color:var(--ink-soft)}
+
+/* toolbar */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding:8px 0}
+.toolbar input{flex:1 1 200px;background:var(--card)}
+.filters{display:flex;gap:4px;flex-wrap:wrap}
+.filters button{font:500 .78rem var(--mono);background:transparent;border:1px solid var(--line);color:var(--ink-soft);padding:5px 9px;border-radius:3px;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* cards */
+.list{display:grid;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--t);border-radius:3px;padding:12px 14px;box-shadow:var(--shadow);animation:in .35s ease both;position:relative}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tag-type{font:500 .66rem var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--t)}
+.card h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:2px 0 4px;line-height:1.2;overflow-wrap:anywhere}
+.card p{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.card a{color:var(--link);overflow-wrap:anywhere}
+.meta{font:.7rem var(--mono);color:var(--ink-soft);margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.chip{font:.72rem var(--mono);background:var(--paper-2);border:1px solid var(--line);padding:2px 7px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.actions{display:flex;gap:2px;flex-shrink:0}
+.ico{background:transparent;border:none;cursor:pointer;font-size:1rem;padding:4px 6px;border-radius:3px;color:var(--ink-soft);line-height:1}
+.ico:hover{background:var(--paper-2);color:var(--ink)}
+.ico.on{color:var(--accent)}
+.empty{text-align:center;padding:40px 10px;color:var(--ink-soft);font-family:var(--display);font-style:italic;font-size:1.1rem}
+footer{margin-top:28px;padding-top:14px;border-top:1px dashed var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(120%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:3px;font-size:.88rem;transition:transform .25s;z-index:20;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.editing{outline:2px dashed var(--accent);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Mi <em>agenda</em></h1>
+      <div class="sub">Ideas · Direcciones · Enlaces · Notas</div>
+    </div>
+    <div class="status" id="status"><span class="dot" id="dot"></span><span id="statusTxt">Guardado en este dispositivo</span></div>
+  </header>
+
+  <section class="composer" id="composer" aria-label="Nueva anotación">
+    <div class="types" id="types" role="group" aria-label="Tipo"></div>
+    <div class="fields">
+      <input id="fTitle" placeholder="Título (opcional)" maxlength="200">
+      <input id="fUrl" placeholder="https://… (el enlace)" inputmode="url" hidden>
+      <input id="fAddr" placeholder="Calle, número, localidad…" hidden>
+      <textarea id="fBody" placeholder="Anotá lo que se te ocurra…"></textarea>
+      <input id="fTags" placeholder="Etiquetas separadas por coma (ej: clases, radio, viaje)">
+    </div>
+    <div class="row">
+      <span class="hint grow" id="composeHint">Ctrl + Enter para guardar rápido</span>
+      <button class="btn ghost" id="cancelEdit" hidden>Cancelar</button>
+      <button class="btn" id="save">Guardar</button>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <label class="sr" for="q">Buscar</label>
+    <input id="q" type="search" placeholder="🔍 Buscar en todo…">
+    <div class="filters" id="filters" role="group" aria-label="Filtrar"></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <footer>
+    <span class="hint" id="count"></span>
+    <span style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn ghost small" id="exportBtn">⬇ Exportar copia</button>
+      <button class="btn ghost small" id="importBtn">⬆ Importar</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  const TYPES = {
+    idea:{label:"Idea",emoji:"💡",c:"var(--idea)"},
+    dir:{label:"Dirección",emoji:"📍",c:"var(--dir)"},
+    link:{label:"Enlace",emoji:"🔗",c:"var(--link)"},
+    nota:{label:"Nota",emoji:"📝",c:"var(--nota)"}
+  };
+  const LS_KEY = "agenda-ariel-v1";
+  const $ = id => document.getElementById(id);
+
+  let entries = [];
+  let curType = "idea", filter = "all", editingId = null;
+  let remoteRef = null, pushing = false, pushAgain = false, pushTimer = null;
+
+  // ---------- almacenamiento local ----------
+  function loadLocal(){
+    try{ const raw = localStorage.getItem(LS_KEY); const v = raw ? JSON.parse(raw) : []; return Array.isArray(v) ? v : []; }
+    catch(e){ return []; }
+  }
+  function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(entries)); }catch(e){} }
+
+  // ---------- utilidades ----------
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function fmtDate(t){
+    try{ return new Date(t).toLocaleString("es-AR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }
+    catch(e){ return ""; }
+  }
+  function normUrl(u){ u = (u||"").trim(); if(!u) return ""; if(!/^[a-z][a-z0-9+.-]*:/i.test(u)) u = "https://" + u; return u; }
+  function safeHref(u){ return /^(https?:|mailto:|tel:)/i.test(u) ? u : "#"; }
+  function linkify(text){
+    return esc(text).replace(/(https?:\/\/[^\s<]+)/g, m => `<a href="${m}" target="_blank" rel="noopener">${m}</a>`);
+  }
+  function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200); }
+  function setStatus(txt, state){ $("statusTxt").textContent = txt; $("dot").className = "dot" + (state ? " "+state : ""); }
+
+  // ---------- fusión (varios dispositivos) ----------
+  function merge(a, b){
+    const map = new Map();
+    for(const e of [...a, ...b]){
+      if(!e || !e.id) continue;
+      const cur = map.get(e.id);
+      if(!cur || (e.updatedAt||0) > (cur.updatedAt||0)) map.set(e.id, e);
+    }
+    const limit = Date.now() - 1000*60*60*24*90; // borrados viejos se olvidan a los 90 días
+    return [...map.values()].filter(e => !(e.deleted && (e.updatedAt||0) < limit));
+  }
+  const sig = arr => JSON.stringify([...arr].sort((x,y)=>x.id<y.id?-1:1).map(e=>[e.id,e.updatedAt]));
+
+  // ---------- UI tipos y filtros ----------
+  function buildTypeButtons(){
+    $("types").innerHTML = Object.entries(TYPES).map(([k,t]) =>
+      `<button type="button" data-t="${k}" style="--t:${t.c}" aria-pressed="${k===curType}"><span class="sw"></span>${t.emoji} ${t.label}</button>`).join("");
+    $("filters").innerHTML = `<button data-f="all" aria-pressed="${filter==='all'}">Todo</button>` +
+      `<button data-f="pin" aria-pressed="${filter==='pin'}">★ Fijadas</button>` +
+      Object.entries(TYPES).map(([k,t]) => `<button data-f="${k}" aria-pressed="${filter===k}">${t.emoji} ${t.label}</button>`).join("");
+  }
+  function setType(t){
+    curType = t;
+    $("fUrl").hidden = t !== "link";
+    $("fAddr").hidden = t !== "dir";
+    $("fBody").placeholder = t==="link" ? "¿De qué trata este enlace? (opcional)" : t==="dir" ? "Referencias, horarios, a quién ver… (opcional)" : "Anotá lo que se te ocurra…";
+    buildTypeButtons();
+  }
+  $("types").addEventListener("click", e => { const b=e.target.closest("button[data-t]"); if(b) setType(b.dataset.t); });
+  $("filters").addEventListener("click", e => { const b=e.target.closest("button[data-f]"); if(!b) return; filter=b.dataset.f; buildTypeButtons(); render(); });
+  $("q").addEventListener("input", render);
+
+  // ---------- guardar / editar ----------
+  function clearForm(){
+    ["fTitle","fUrl","fAddr","fBody","fTags"].forEach(id => $(id).value = "");
+    editingId = null; $("cancelEdit").hidden = true; $("save").textContent = "Guardar";
+    $("composer").classList.remove("editing"); $("composeHint").textContent = "Ctrl + Enter para guardar rápido";
+  }
+  function commit(){
+    const title=$("fTitle").value.trim(), body=$("fBody").value.trim();
+    const url = curType==="link" ? normUrl($("fUrl").value) : "";
+    const address = curType==="dir" ? $("fAddr").value.trim() : "";
+    const tags = $("fTags").value.split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
+    if(!title && !body && !url && !address){ toast("Escribí algo antes de guardar"); return; }
+    if(curType==="link" && !url){ toast("Falta el enlace"); $("fUrl").focus(); return; }
+    if(curType==="dir" && !address){ toast("Falta la dirección"); $("fAddr").focus(); return; }
+    const now = Date.now();
+    if(editingId){
+      entries = entries.map(e => e.id===editingId ? {...e, type:curType, title, body, url, address, tags, updatedAt:now} : e);
+      toast("Cambios guardados ✓");
+    }else{
+      entries.push({id:uid(), type:curType, title, body, url, address, tags, pinned:false, createdAt:now, updatedAt:now});
+      toast("Anotado ✓");
+    }
+    clearForm(); persist(); render();
+  }
+  $("save").addEventListener("click", commit);
+  $("cancelEdit").addEventListener("click", clearForm);
+  $("composer").addEventListener("keydown", e => { if((e.ctrlKey||e.metaKey) && e.key==="Enter") commit(); });
+
+  function startEdit(id){
+    const e = entries.find(x=>x.id===id); if(!e) return;
+    editingId = id; setType(e.type);
+    $("fTitle").value=e.title||""; $("fBody").value=e.body||""; $("fUrl").value=e.url||""; $("fAddr").value=e.address||""; $("fTags").value=(e.tags||[]).join(", ");
+    $("cancelEdit").hidden=false; $("save").textContent="Guardar cambios";
+    $("composer").classList.add("editing"); $("composeHint").textContent="Editando anotación";
+    $("composer").scrollIntoView({behavior:"smooth",block:"start"}); $("fTitle").focus();
+  }
+
+  $("list").addEventListener("click", e => {
+    const chip = e.target.closest(".chip"); if(chip){ $("q").value = "#"+chip.dataset.tag; render(); return; }
+    const b = e.target.closest("button[data-act]"); if(!b) return;
+    const id = b.closest(".card").dataset.id, now = Date.now();
+    const act = b.dataset.act;
+    if(act==="pin"){ entries = entries.map(x => x.id===id ? {...x, pinned:!x.pinned, updatedAt:now} : x); persist(); render(); }
+    else if(act==="edit"){ startEdit(id); }
+    else if(act==="copy"){
+      const x = entries.find(y=>y.id===id);
+      const txt = [x.title, x.url, x.address, x.body].filter(Boolean).join("\n");
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(()=>toast("Copiado ✓"), ()=>toast("No se pudo copiar"));
+    }
+    else if(act==="del"){
+      if(!confirm("¿Borrar esta anotación?")) return;
+      entries = entries.map(x => x.id===id ? {id:x.id, deleted:true, updatedAt:now} : x);
+      if(editingId===id) clearForm();
+      persist(); render(); toast("Borrada");
+    }
+  });
+
+  // ---------- render ----------
+  function render(){
+    const q = $("q").value.trim().toLowerCase();
+    const live = entries.filter(e => !e.deleted);
+    let items = live.filter(e => filter==="all" || (filter==="pin" ? e.pinned : e.type===filter));
+    if(q){
+      if(q.startsWith("#")){ const t=q.slice(1); items = items.filter(e => (e.tags||[]).some(x=>x.includes(t))); }
+      else items = items.filter(e => [e.title,e.body,e.url,e.address,(e.tags||[]).join(" ")].join(" ").toLowerCase().includes(q));
+    }
+    items.sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0) || (b.createdAt||0)-(a.createdAt||0));
+    $("count").textContent = `${live.length} anotación${live.length===1?"":"es"}` + (items.length!==live.length ? ` · mostrando ${items.length}` : "");
+    if(!items.length){
+      $("list").innerHTML = `<div class="empty">${live.length ? "Nada coincide con la búsqueda." : "La libreta está en blanco. Empezá anotando algo arriba."}</div>`;
+      return;
+    }
+    $("list").innerHTML = items.map((e,i) => {
+      const t = TYPES[e.type] || TYPES.nota;
+      let extra = "";
+      if(e.type==="link" && e.url){ const h=safeHref(e.url); extra += `<p>🔗 <a href="${esc(h)}" target="_blank" rel="noopener">${esc(e.url.replace(/^https?:\/\//,""))}</a></p>`; }
+      if(e.type==="dir" && e.address){ extra += `<p>📍 ${esc(e.address)} · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.address)}" target="_blank" rel="noopener">ver en el mapa</a></p>`; }
+      const title = e.title || (e.type==="link" ? (e.url||"").replace(/^https?:\/\//,"").split("/")[0] : e.type==="dir" ? e.address : "");
+      return `<article class="card" data-id="${esc(e.id)}" style="--t:${t.c};animation-delay:${Math.min(i,10)*30}ms">
+        <div class="top">
+          <div style="min-width:0">
+            <div class="tag-type">${t.emoji} ${t.label}</div>
+            ${title ? `<h3>${esc(title)}</h3>` : ""}
+          </div>
+          <div class="actions">
+            <button class="ico ${e.pinned?"on":""}" data-act="pin" title="${e.pinned?"Desfijar":"Fijar arriba"}" aria-label="Fijar">${e.pinned?"★":"☆"}</button>
+            <button class="ico" data-act="copy" title="Copiar" aria-label="Copiar">⧉</button>
+            <button class="ico" data-act="edit" title="Editar" aria-label="Editar">✎</button>
+            <button class="ico" data-act="del" title="Borrar" aria-label="Borrar">🗑</button>
+          </div>
+        </div>
+        ${extra}
+        ${e.body ? `<p>${linkify(e.body)}</p>` : ""}
+        ${(e.tags&&e.tags.length) ? `<div class="chips">${e.tags.map(x=>`<span class="chip" data-tag="${esc(x)}">#${esc(x)}</span>`).join("")}</div>` : ""}
+        <div class="meta"><span>${fmtDate(e.createdAt)}</span>${e.updatedAt-e.createdAt>60000 ? `<span>· editada ${fmtDate(e.updatedAt)}</span>` : ""}</div>
+      </article>`;
+    }).join("");
+  }
+
+  // ---------- persistencia: local siempre + nube cuando está ----------
+  function persist(){ saveLocal(); schedulePush(); }
+  function schedulePush(){ if(!remoteRef) return; clearTimeout(pushTimer); pushTimer = setTimeout(push, 700); }
+  async function push(){
+    if(!remoteRef) return;
+    if(pushing){ pushAgain = true; return; }
+    pushing = true; setStatus("Sincronizando…");
+    try{
+      await remoteRef.set({entries, savedAt: Date.now()});
+      setStatus("Guardado en tu cuenta", "ok");
+    }catch(err){
+      if(err && err.code==="unavailable"){ await new Promise(r=>setTimeout(r, 800+Math.random()*1200)); pushAgain = true; }
+      else setStatus("Solo en este dispositivo", "err");
+    }finally{
+      pushing = false;
+      if(pushAgain){ pushAgain = false; push(); }
+    }
+  }
+  async function connectCloud(){
+    if(!window.claude || typeof window.claude.use !== "function") return;
+    try{
+      const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      if(!db || !user) return;
+      const id = await user.id();
+      if(!id) return;
+      remoteRef = db.doc("data/users/" + id + "/agenda");
+      setStatus("Conectando con tu cuenta…");
+      let first = true;
+      remoteRef.onSnapshot(snap => {
+        const remote = (snap.exists && Array.isArray(snap.data().entries)) ? snap.data().entries : [];
+        const merged = merge(entries, remote);
+        const changedLocal = sig(merged) !== sig(entries);
+        entries = merged;
+        if(changedLocal){ saveLocal(); render(); }
+        if(sig(merged) !== sig(remote)) schedulePush();
+        else if(!snap.metadata.hasPendingWrites) setStatus("Guardado en tu cuenta", "ok");
+        if(first){ first = false; }
+      }, err => {
+        setStatus("Solo en este dispositivo", "err");
+      });
+    }catch(e){ /* sin nube: sigue funcionando localmente */ }
+  }
+
+  // ---------- exportar / importar ----------
+  $("exportBtn").addEventListener("click", async () => {
+    const data = JSON.stringify({app:"mi-agenda", version:1, exportedAt:new Date().toISOString(), entries: entries.filter(e=>!e.deleted)}, null, 2);
+    const filename = "mi-agenda-" + new Date().toISOString().slice(0,10) + ".json";
+    try{
+      const dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+      if(dl){ await dl.save({filename, data}); toast("Copia exportada ✓"); return; }
+    }catch(e){ toast("Descarga cancelada"); return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([data],{type:"application/json"})); a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", ev => {
+    const f = ev.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const obj = JSON.parse(r.result);
+        const list = Array.isArray(obj) ? obj : obj.entries;
+        if(!Array.isArray(list)) throw 0;
+        const clean = list.filter(e => e && e.id && TYPES[e.type]);
+        entries = merge(entries, clean); persist(); render();
+        toast(`Importadas ${clean.length} anotaciones ✓`);
+      }catch(e){ toast("Ese archivo no es una copia válida"); }
+      ev.target.value = "";
+    };
+    r.readAsText(f);
+  });
+
+  // ---------- arranque ----------
+  entries = loadLocal();
+  setType("idea"); render();
+  connectCloud();
+})();
+</script>
+</body>
+</html>
